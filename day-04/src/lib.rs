@@ -122,6 +122,47 @@ impl WordSearch {
 
         count
     }
+
+    pub fn count_xmas(&self) -> usize {
+        let mut sum = 0;
+
+        for x in 0..self.width {
+            for y in 0..self.height {
+                if self.lines[y].chars().nth(x).unwrap() == 'A' {
+                    sum = sum + self.is_christmas(x, y);
+                }
+            }
+        }
+
+        sum
+    }
+
+    pub fn is_christmas(&self, x: usize, y: usize) -> usize {
+        let can_look_right= x <= self.width - 2;
+        let can_look_left = x >= 1;
+        let can_look_up = y >= 1;
+        let can_look_down = y <= self.height - 2;
+
+        if can_look_right && can_look_up && can_look_left && can_look_down {
+            let diag_1_1 = &self.lines[y - 1][x-1..x];
+            let diag_1_2 = &self.lines[y + 1][x+1..x+2];
+            let diag_1 = format!("{diag_1_1}A{diag_1_2}");
+
+            let diag_1_1 = &self.lines[y - 1][x+1..x+2];
+            let diag_1_2 = &self.lines[y + 1][x-1..x];
+            let diag_2 = format!("{diag_1_1}A{diag_1_2}");
+
+            match (diag_1.as_str(), diag_2.as_str()) {
+                ("MAS", "MAS") => 1,
+                ("SAM", "MAS") => 1,
+                ("MAS", "SAM") => 1,
+                ("SAM", "SAM") => 1,
+                _ => 0,
+            }
+        } else {
+            0
+        }
+    }
 }
 
 #[cfg(test)]

@@ -5,5 +5,6 @@ fn main() {
 
     let ws = WordSearch::new(input);
 
-    println!("{}", ws.occurences("XMAS"))
+    // println!("{}", ws.occurences("XMAS"))
+    println!("{}", ws.count_xmas())
 }
