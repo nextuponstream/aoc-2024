@@ -6,6 +6,7 @@ fn main() {
     let mut lines: Vec<&str> = input.split("\n").collect();
     lines.pop(); // delete last empty line
     let reports: Vec<Report> = lines.iter().map(|line| (*line).try_into().unwrap()).collect();
-    let safe_count = reports.iter().filter(|r| r.safe()).count();
+    // let safe_count = reports.iter().filter(|r| r.safe()).count();
+    let safe_count = reports.iter().filter(|r| r.safe_tolerate()).count();
     println!("{safe_count}")
 }

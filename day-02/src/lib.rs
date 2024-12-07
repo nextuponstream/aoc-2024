@@ -47,6 +47,22 @@ impl Report {
 
         true
     }
+
+    pub fn safe_tolerate(&self) -> bool {
+        if self.safe() {
+            return true;
+        }
+        for i in 0..self.0.len() {
+            let mut maybe_tolerable_report = self.0.clone();
+            maybe_tolerable_report.remove(i);
+            let maybe_tolerable_report = Report(maybe_tolerable_report);
+            if maybe_tolerable_report.safe() {
+                return true;
+            }
+        }
+
+        false
+    }
 }
 
 impl From<&str> for Report {
