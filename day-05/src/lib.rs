@@ -38,19 +38,7 @@ impl Manual {
     pub fn sum_of_valid_updates(&self) -> usize {
         let mut sum: usize = 0;
         for update in &self.updates {
-            let mut update_is_valid = true;
-            for rule in &self.rules {
-                let left_index = update.iter().position(|&r| r == rule.0);
-                let right_index = update.iter().position(|&r| r == rule.1);
-
-                if let (Some(left_pos), Some(right_pos)) = (left_index, right_index) {
-                    if left_pos > right_pos {
-                        update_is_valid = false;
-                    }
-                }
-            }
-
-            if update_is_valid {
+            if self.is_valid(&update) {
                 let middle = update.len() / 2;
                 let to_add = update[middle];
                 sum = sum + to_add;
@@ -58,5 +46,51 @@ impl Manual {
         }
 
         sum
+    }
+
+    fn is_valid(&self, update: &Update) -> bool {
+        let mut update_is_valid = true;
+        for rule in &self.rules {
+            let left_index = update.iter().position(|&r| r == rule.0);
+            let right_index = update.iter().position(|&r| r == rule.1);
+
+            if let (Some(left_pos), Some(right_pos)) = (left_index, right_index) {
+                if left_pos > right_pos {
+                    update_is_valid = false;
+                }
+            }
+        }
+
+        update_is_valid
+    }
+
+    pub fn sum_of_invalid_updates_after_reordering(&self) -> usize {
+        let mut sum = 0;
+        for update in &self.updates {
+            if !self.is_valid(&update) {
+                sum = sum + self.reorder_and_give_middle(&update);
+            }
+        }
+
+        sum
+    }
+
+    /// Not efficient but correct nonetheless
+    fn reorder_and_give_middle(&self, update: &Update) -> usize {
+        let mut update = update.clone();
+        for _rule in &self.rules {
+            for rule in &self.rules {
+                let left_index = update.iter().position(|&r| r == rule.0);
+                let right_index = update.iter().position(|&r| r == rule.1);
+                if let (Some(left_pos), Some(right_pos)) = (left_index, right_index) {
+                    if left_pos > right_pos {
+                        update.swap(left_pos, right_pos)
+                    }
+                }
+            }
+        }
+
+        let middle = update.len() / 2;
+        update[middle]
     }
 }
