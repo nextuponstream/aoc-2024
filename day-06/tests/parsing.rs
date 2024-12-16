@@ -16,3 +16,19 @@ fn parse_map() {
     let map = Map::new(input);
     assert_eq!(41, map.visited());
 }
+#[test]
+fn paradoxes() {
+    let input = "\
+....#.....
+.........#
+..........
+..#.......
+.......#..
+..........
+.#..^.....
+........#.
+#.........
+......#...";
+    let map = Map::new(input);
+    assert_eq!(6, map.paradoxes());
+}

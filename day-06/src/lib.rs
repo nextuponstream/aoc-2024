@@ -151,4 +151,61 @@ impl Map {
             .map(|v| v.iter().map(|s| if *s { 1 } else { 0 }).sum::<usize>())
             .sum()
     }
+
+    pub fn paradoxes(&self) -> usize {
+        let mut paradoxes = 0;
+        for y in 0_usize..self.obstacles.len() {
+            for x in 0_usize..self.obstacles[0].len() {
+                let mut updated_obstacles = self.obstacles.clone().to_owned();
+                if self.obstacles[y][x] {
+                    continue;
+                } else {
+                    updated_obstacles[y][x] = true;
+                }
+                let maybe_paradox = Map {
+                    obstacles: updated_obstacles,
+                    starting_position: self.starting_position,
+                };
+                if maybe_paradox.is_paradox() {
+                    paradoxes = paradoxes + 1;
+                }
+            }
+        }
+
+        paradoxes
+    }
+
+    fn is_paradox(&self) -> bool {
+        let mut position = self.starting_position;
+        let mut visited: Vec<Vec<bool>> = self
+            .obstacles
+            .iter()
+            .map(|l| l.iter().map(|_| false).collect())
+            .collect();
+        visited[self.starting_position.1][self.starting_position.0] = true;
+
+        let visited_threshold = self.obstacles.len() * self.obstacles[0].len();
+        let mut visited_counter = 0;
+
+        while !self.exited(position) {
+            // self.print_position(&position, &visited);
+            let (new_position, moved) = self.next_move(position);
+            position = new_position;
+            if moved {
+                if visited[position.1][position.0] {
+                    visited_counter = visited_counter + 1;
+                } else {
+                    visited_counter = 0;
+                }
+
+                visited[position.1][position.0] = true;
+
+                if visited_counter >= visited_threshold {
+                    return true;
+                }
+            }
+        }
+
+        false
+    }
 }
